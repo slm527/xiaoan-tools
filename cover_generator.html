@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小红书封面图生成器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: #f5f6fa; min-height: 100vh; display: flex; justify-content: center; padding: 20px; }
+        .container { max-width: 900px; width: 100%; }
+        h1 { text-align: center; color: #2d3436; font-size: 1.5em; margin: 20px 0; }
+        .main { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+        .controls { flex: 1; min-width: 300px; background: white; padding: 24px; border-radius: 16px; box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+        .controls label { display: block; font-size: 0.85em; color: #636e72; margin: 12px 0 4px; }
+        .controls input, .controls select { width: 100%; padding: 10px 12px; border: 1px solid #dfe6e9; border-radius: 8px; font-size: 1em; outline: none; }
+        .controls input:focus { border-color: #6c5ce7; }
+        .controls .color-row { display: flex; gap: 8px; }
+        .controls .color-row input[type="color"] { flex: 1; height: 44px; padding: 2px; cursor: pointer; }
+        .preview-wrap { flex: 1; min-width: 280px; display: flex; flex-direction: column; align-items: center; }
+        #preview { width: 100%; max-width: 360px; border-radius: 12px; box-shadow: 0 4px 30px rgba(0,0,0,0.1); }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; margin-top: 12px; color: white; }
+        .btn-primary { background: #6c5ce7; }
+        .btn-primary:hover { background: #5a4bd1; }
+        .btn-success { background: #00b894; }
+        .btn-success:hover { background: #00a381; }
+        .btn-sm { padding: 8px 16px; width: auto; margin-top: 8px; }
+        .templates { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+        .template-btn { padding: 6px 14px; border: 1px solid #dfe6e9; border-radius: 20px; font-size: 0.8em; cursor: pointer; background: white; color: #636e72; }
+        .template-btn:hover { border-color: #6c5ce7; color: #6c5ce7; }
+        .support { text-align: center; margin-top: 30px; padding: 20px; background: white; border-radius: 12px; }
+        .support img { width: 160px; height: 160px; border-radius: 8px; }
+        .footer { text-align: center; padding: 30px; color: #b2bec3; font-size: 0.85em; }
+        @media (max-width: 640px) {
+            .controls { min-width: 100%; }
+            .preview-wrap { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎨 小红书封面图生成器</h1>
+    <div class="main">
+        <div class="controls">
+            <label>主标题</label>
+            <input type="text" id="title" value="一篇笔记憋3小时" placeholder="输入主标题，换行用|分隔">
+            <label>副标题（可选）</label>
+            <input type="text" id="subtitle" value="AI工具帮你搞定" placeholder="副标题">
+            
+            <label>背景色</label>
+            <div class="color-row">
+                <input type="color" id="bgColor" value="#FFF5F5">
+                <input type="color" id="textColor" value="#D4380D">
+            </div>
+
+            <label>快速模板</label>
+            <div class="templates">
+                <span class="template-btn" onclick="applyTemplate('#FFF5F5','#D4380D','粉色')">🌸 粉色</span>
+                <span class="template-btn" onclick="applyTemplate('#F0FFF4','#2E7D32','绿色')">🌿 绿色</span>
+                <span class="template-btn" onclick="applyTemplate('#FFF8E1','#E65100','橙色')">🍊 橙色</span>
+                <span class="template-btn" onclick="applyTemplate('#E3F2FD','#1565C0','蓝色')">🌊 蓝色</span>
+                <span class="template-btn" onclick="applyTemplate('#F3E5F5','#7B1FA2','紫色')">💜 紫色</span>
+                <span class="template-btn" onclick="applyTemplate('#263238','#FFFFFF','暗黑')">🌙 暗黑</span>
+            </div>
+
+            <label>风格</label>
+            <select id="style">
+                <option value="centered">居中大字</option>
+                <option value="split">上下分割</option>
+                <option value="minimal">极简留白</option>
+            </select>
+
+            <button class="btn btn-primary" onclick="generate()">🔄 生成预览</button>
+            <button class="btn btn-success" onclick="downloadImage()">📥 下载封面图</button>
+        </div>
+
+        <div class="preview-wrap">
+            <canvas id="preview" width="540" height="720"></canvas>
+        </div>
+    </div>
+
+    <div class="support">
+        <p style="color:#636e72;margin-bottom:12px;">💖 好用的话支持一下吧</p>
+        <img src="wechat_qr.jpg" alt="微信收款码">
+    </div>
+
+    <div class="footer">
+        小安工坊 · 输入文字即出图 · 无需安装任何软件<br>
+        <small>封面尺寸 1080×1440（小红书推荐比例 3:4）</small>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('preview');
+    const ctx = canvas.getContext('2d');
+    const W = 540, H = 720;  // scaled for preview
+
+    function applyTemplate(bg, text, name) {
+        document.getElementById('bgColor').value = bg;
+        document.getElementById('textColor').value = text;
+        generate();
+    }
+
+    function hexToRgba(hex, alpha=1) {
+        const r = parseInt(hex.slice(1,3), 16);
+        const g = parseInt(hex.slice(3,5), 16);
+        const b = parseInt(hex.slice(5,7), 16);
+        return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    function wrapText(text, maxChars) {
+        const lines = text.split('|');
+        const result = [];
+        for (let line of lines) {
+            while (line.length > maxChars) {
+                let breakPoint = maxChars;
+                result.push(line.slice(0, breakPoint));
+                line = line.slice(breakPoint);
+            }
+            result.push(line);
+        }
+        return result;
+    }
+
+    function generate() {
+        const title = document.getElementById('title').value || '标题';
+        const subtitle = document.getElementById('subtitle').value;
+        const bgColor = document.getElementById('bgColor').value;
+        const textColor = document.getElementById('textColor').value;
+        const style = document.getElementById('style').value;
+
+        canvas.width = W;
+        canvas.height = H;
+
+        // Background
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, W, H);
+
+        // Decorative elements
+        const decoColor = hexToRgba(textColor, 0.08);
+        ctx.fillStyle = decoColor;
+        ctx.beginPath();
+        ctx.arc(W*0.85, H*0.12, 80, 0, Math.PI*2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(W*0.1, H*0.9, 60, 0, Math.PI*2);
+        ctx.fill();
+
+        // Bottom accent line
+        ctx.fillStyle = hexToRgba(textColor, 0.3);
+        ctx.fillRect(W*0.15, H-5, W*0.7, 3);
+
+        // Title
+        const lines = wrapText(title, 7);
+        const lineHeight = 70;
+        const startY = style === 'split' ? H*0.25 : H*0.35;
+        const fontSize = lines.length > 2 ? 44 : 52;
+
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Shadow
+        ctx.shadowColor = hexToRgba(textColor, 0.2);
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 3;
+        ctx.shadowOffsetY = 3;
+
+        ctx.fillStyle = textColor;
+        ctx.font = `bold ${fontSize}px -apple-system, "PingFang SC", sans-serif`;
+
+        lines.forEach((line, i) => {
+            const y = startY + i * lineHeight;
+            ctx.fillText(line, W/2, y);
+        });
+
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        // Subtitle
+        if (subtitle) {
+            ctx.fillStyle = hexToRgba(textColor, 0.6);
+            ctx.font = `24px -apple-system, "PingFang SC", sans-serif`;
+            const subY = startY + lines.length * lineHeight + 40;
+            ctx.fillText(subtitle, W/2, subY);
+        }
+
+        // Style-specific features
+        if (style === 'split') {
+            ctx.fillStyle = hexToRgba('#ffffff', 0.3);
+            ctx.fillRect(0, H*0.55, W, 2);
+        }
+
+        if (style === 'minimal') {
+            // Thin border
+            ctx.strokeStyle = hexToRgba(textColor, 0.15);
+            ctx.lineWidth = 2;
+            ctx.strokeRect(20, 20, W-40, H-40);
+        }
+    }
+
+    function downloadImage() {
+        // Render at full resolution
+        const fullCanvas = document.createElement('canvas');
+        fullCanvas.width = 1080;
+        fullCanvas.height = 1440;
+        const fctx = fullCanvas.getContext('2d');
+
+        const title = document.getElementById('title').value || '标题';
+        const subtitle = document.getElementById('subtitle').value;
+        const bgColor = document.getElementById('bgColor').value;
+        const textColor = document.getElementById('textColor').value;
+        const style = document.getElementById('style').value;
+        const FW = 1080, FH = 1440;
+
+        // Background
+        fctx.fillStyle = bgColor;
+        fctx.fillRect(0, 0, FW, FH);
+
+        // Decorative elements
+        const decoColor = hexToRgba(textColor, 0.08);
+        fctx.fillStyle = decoColor;
+        fctx.beginPath(); fctx.arc(FW*0.85, FH*0.12, 160, 0, Math.PI*2); fctx.fill();
+        fctx.beginPath(); fctx.arc(FW*0.1, FH*0.9, 120, 0, Math.PI*2); fctx.fill();
+
+        // Bottom accent
+        fctx.fillStyle = hexToRgba(textColor, 0.3);
+        fctx.fillRect(FW*0.15, FH-10, FW*0.7, 6);
+
+        // Title
+        const fLines = wrapText(title, 14);
+        const fLineHeight = 140;
+        const fStartY = style === 'split' ? FH*0.25 : FH*0.35;
+        const fFontSize = fLines.length > 2 ? 88 : 104;
+
+        fctx.textAlign = 'center';
+        fctx.textBaseline = 'middle';
+
+        fctx.shadowColor = hexToRgba(textColor, 0.2);
+        fctx.shadowBlur = 16;
+        fctx.shadowOffsetX = 6;
+        fctx.shadowOffsetY = 6;
+
+        fctx.fillStyle = textColor;
+        fctx.font = `bold ${fFontSize}px -apple-system, "PingFang SC", sans-serif`;
+
+        fLines.forEach((line, i) => {
+            fctx.fillText(line, FW/2, fStartY + i * fLineHeight);
+        });
+
+        fctx.shadowColor = 'transparent';
+        fctx.shadowBlur = 0;
+        fctx.shadowOffsetX = 0;
+        fctx.shadowOffsetY = 0;
+
+        if (subtitle) {
+            fctx.fillStyle = hexToRgba(textColor, 0.6);
+            fctx.font = `48px -apple-system, "PingFang SC", sans-serif`;
+            fctx.fillText(subtitle, FW/2, fStartY + fLines.length * fLineHeight + 80);
+        }
+
+        if (style === 'split') {
+            fctx.fillStyle = hexToRgba('#ffffff', 0.3);
+            fctx.fillRect(0, FH*0.55, FW, 4);
+        }
+
+        if (style === 'minimal') {
+            fctx.strokeStyle = hexToRgba(textColor, 0.15);
+            fctx.lineWidth = 4;
+            fctx.strokeRect(40, 40, FW-80, FH-80);
+        }
+
+        const link = document.createElement('a');
+        link.download = `cover_${Date.now()}.png`;
+        link.href = fullCanvas.toDataURL('image/png');
+        link.click();
+    }
+
+    // Initial render
+    generate();
+</script>
+</body>
+</html>
