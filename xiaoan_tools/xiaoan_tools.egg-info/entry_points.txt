@@ -1,0 +1,2 @@
+[console_scripts]
+xiaohongshu-cover = xiaoan_tools.cover:main
