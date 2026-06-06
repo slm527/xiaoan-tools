@@ -14,8 +14,8 @@
 
 ## 🌐 线上渠道
 
-- **商城:** https://slm527.github.io/xiaoan-tools/
-- **封面生成器:** https://slm527.github.io/xiaoan-tools/cover_generator.html
+- **商城:** https://slm527.github.io/xiaoan-tools/ （国内加速：https://cdn.jsdelivr.net/gh/slm527/xiaoan-tools@main/index.html）
+- **封面生成器:** https://slm527.github.io/xiaoan-tools/ （国内加速：https://cdn.jsdelivr.net/gh/slm527/xiaoan-tools@main/index.html）cover_generator.html
 - **PyPI包:** `pip3 install xiaoan-tools`
 
 ## 💖 支持
