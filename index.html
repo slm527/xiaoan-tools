@@ -7,116 +7,135 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, system-ui, sans-serif; background: #f5f6fa; color: #2d3436; line-height: 1.6; }
-        .header { background: linear-gradient(135deg, #1e3799 0%, #6c5ce7 100%); color: white; padding: 50px 20px; text-align: center; }
-        .header h1 { font-size: 2em; margin-bottom: 8px; }
-        .header p { opacity: 0.85; font-size: 1em; }
-        .container { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
-        .products { display: grid; gap: 24px; }
-        .card { background: white; border-radius: 16px; padding: 28px; box-shadow: 0 2px 20px rgba(0,0,0,0.06); transition: 0.2s; border: 1px solid #eee; display: flex; flex-direction: column; }
-        .card:hover { border-color: #6c5ce7; box-shadow: 0 4px 30px rgba(108,92,231,0.1); }
-        .card h2 { font-size: 1.25em; color: #1e3799; margin-bottom: 6px; }
-        .card .badge { display: inline-block; background: #ffeaa7; color: #2d3436; font-size: 0.75em; padding: 2px 10px; border-radius: 4px; margin-bottom: 10px; width: fit-content; }
+        .header { background: linear-gradient(135deg, #0652DD 0%, #6c5ce7 100%); color: white; padding: 45px 20px; text-align: center; }
+        .header h1 { font-size: 1.8em; margin-bottom: 6px; }
+        .header p { opacity: 0.8; font-size: 0.95em; }
+        .container { max-width: 960px; margin: 0 auto; padding: 30px 20px; }
+        .products { display: grid; gap: 18px; }
+        .card { background: white; border-radius: 14px; padding: 24px; box-shadow: 0 2px 16px rgba(0,0,0,0.05); transition: 0.2s; border: 1px solid #eee; }
+        .card:hover { border-color: #6c5ce7; }
+        .card h2 { font-size: 1.15em; color: #1e3799; margin-bottom: 4px; }
+        .card .badge { display: inline-block; background: #ffeaa7; color: #2d3436; font-size: 0.72em; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
         .card .badge.hot { background: #ff7675; color: white; }
         .card .badge.new { background: #55efc4; color: #2d3436; }
-        .card .desc { color: #636e72; font-size: 0.9em; margin-bottom: 8px; flex: 1; }
-        .card .meta { display: flex; align-items: center; justify-content: space-between; margin: 12px 0; }
-        .card .price { font-size: 1.6em; color: #d63031; font-weight: bold; }
-        .card .price small { font-size: 0.5em; color: #b2bec3; font-weight: normal; margin-left: 2px; }
-        .card .format { font-size: 0.78em; color: #b2bec3; }
-        .btn { display: block; background: #6c5ce7; color: white; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-size: 0.95em; font-weight: 600; cursor: pointer; border: none; transition: 0.15s; margin-top: 4px; }
+        .card .badge.sale { background: #d63031; color: white; }
+        .card .desc { color: #636e72; font-size: 0.88em; margin-bottom: 6px; }
+        .card .meta { display: flex; align-items: center; justify-content: space-between; margin: 10px 0; }
+        .card .price { font-size: 1.5em; color: #d63031; font-weight: bold; }
+        .card .price .original { font-size: 0.6em; color: #b2bec3; text-decoration: line-through; font-weight: normal; margin-right: 6px; }
+        .card .format { font-size: 0.75em; color: #b2bec3; }
+        .btn { display: block; background: #6c5ce7; color: white; text-align: center; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 0.9em; font-weight: 600; cursor: pointer; border: none; transition: 0.15s; margin-top: 2px; }
         .btn:hover { background: #5a4bd1; transform: translateY(-1px); }
 
         .pay-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .pay-overlay.active { display: flex; }
-        .pay-modal { background: white; padding: 40px 30px; border-radius: 20px; text-align: center; max-width: 380px; width: 90%; position: relative; }
-        .pay-modal h3 { font-size: 1.2em; margin-bottom: 6px; color: #2d3436; }
-        .pay-modal .product-name { color: #636e72; font-size: 0.9em; margin-bottom: 20px; }
-        .pay-modal .pay-price { font-size: 2em; color: #d63031; font-weight: bold; margin-bottom: 16px; }
-        .pay-modal .qrcode-wrap { width: 220px; height: 220px; margin: 0 auto 16px; background: #f8f9fa; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .pay-modal { background: white; padding: 35px 25px; border-radius: 18px; text-align: center; max-width: 360px; width: 90%; position: relative; }
+        .pay-modal h3 { font-size: 1.1em; margin-bottom: 4px; color: #2d3436; }
+        .pay-modal .product-name { color: #636e72; font-size: 0.85em; margin-bottom: 16px; }
+        .pay-modal .pay-price { font-size: 1.8em; color: #d63031; font-weight: bold; margin-bottom: 14px; }
+        .pay-modal .qrcode-wrap { width: 200px; height: 200px; margin: 0 auto 14px; background: #f8f9fa; border-radius: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .pay-modal .qrcode-wrap img { width: 100%; height: 100%; object-fit: contain; }
-        .pay-modal .step-tip { font-size: 0.85em; color: #636e72; line-height: 1.8; }
+        .pay-modal .step-tip { font-size: 0.82em; color: #636e72; line-height: 1.8; }
         .pay-modal .step-tip strong { color: #d63031; }
-        .pay-modal .close-btn { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.5em; color: #b2bec3; cursor: pointer; }
+        .pay-modal .close-btn { position: absolute; top: 10px; right: 14px; background: none; border: none; font-size: 1.4em; color: #b2bec3; cursor: pointer; }
         .pay-modal .close-btn:hover { color: #636e72; }
+        .pay-modal .dl-list { text-align: left; margin-top: 10px; }
+        .pay-modal .dl-list a { display: block; padding: 6px 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 4px; color: #6c5ce7; text-decoration: none; font-size: 0.85em; }
+        .pay-modal .dl-list a:hover { background: #eee; }
 
-        .footer { text-align: center; padding: 40px 20px; color: #b2bec3; font-size: 0.85em; }
+        .footer { text-align: center; padding: 30px 20px; color: #b2bec3; font-size: 0.82em; }
 
         @media (max-width: 640px) {
-            .header h1 { font-size: 1.5em; }
-            .card { padding: 20px; }
+            .header h1 { font-size: 1.4em; }
+            .card { padding: 18px; }
             .card .price { font-size: 1.3em; }
-            .pay-modal { padding: 30px 20px; }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>🏛️ 小安工坊 · 方案库</h1>
-        <p>政府信息化 · AI落地 · 方案模板 · 即买即用</p>
+        <h1>🏛️ 小安工坊</h1>
+        <p>政府信息化 · 方案模板 · 工具效率 · 即买即用</p>
     </div>
 
     <div class="container">
         <div class="products">
+
+            <!-- 产品1：方案模板包全套 -->
             <div class="card">
                 <span class="badge hot">🔥 畅销</span>
-                <h2>📋 政府信息化项目 · 技术方案通用框架</h2>
-                <p class="desc">标准目录结构 + 评分点策略 + 可直接填充。覆盖智慧城市、数字政府、AI改造等常见场景。适合宁波/浙江地区政府项目投标。</p>
-                <p class="desc">包含：完整Word文档（.docx）、目录结构说明、评分点对照表</p>
+                <h2>📋 方案模板包 · 政府信息化全流程</h2>
+                <p class="desc">需求分析 → 项目建议书 → 可研报告 → 初设方案 → 功能点报价。国标格式，直接套用。</p>
+                <p class="desc">含：调研表、建议书、可研（55号文/57号文）、初设方案、功能点报价标准（河南/湖北/海南/贵州/西藏）</p>
                 <div class="meta">
-                    <span class="price">¥29.9</span>
-                    <span class="format">Word · 12页</span>
+                    <span class="price"><span class="original">¥199</span>¥29.9</span>
+                    <span class="format">DOCX+XLSX+PDF · 20+文件</span>
                 </div>
-                <button class="btn" onclick="showPay('政府信息化项目技术方案框架', '29.9')">📥 立即购买</button>
+                <button class="btn" onclick="showPay('方案模板包-全流程', '29.9')">📥 立即购买 ¥29.9</button>
             </div>
 
+            <!-- 产品2：功能点报价表独立 -->
             <div class="card">
-                <span class="badge new">🆕 热门</span>
-                <h2>🤖 AI办公提示词合集 · 80个场景</h2>
-                <p class="desc">覆盖写材料（25个）、标书方案（15个）、数据分析（8个）、沟通协作（10个）、办公效率（12个）、创意辅助（10个）。每条配使用技巧，复制即用。</p>
-                <p class="desc">包含：TXT文件 + MD文件（可直接用）</p>
+                <span class="badge new">🆕 独立包</span>
+                <h2>💰 功能点造价测算模板 · 独立包</h2>
+                <p class="desc">政府信息化项目报价必备！含国标规范、各地报价标准、功能点测算表。自己做报价或审核报价都实用。</p>
+                <p class="desc">含：国标（GB/T 36964）+ 北京/河南/湖北/海南/贵州/西藏标准 + 功能点测算表模板 + 软件估算概念</p>
                 <div class="meta">
-                    <span class="price">¥19.9</span>
+                    <span class="price"><span class="original">¥99</span>¥14.9</span>
+                    <span class="format">PDF+XLSX+DOCX · 15+文件</span>
+                </div>
+                <button class="btn" onclick="showPay('功能点造价测算模板', '14.9')">📥 立即购买 ¥14.9</button>
+            </div>
+
+            <!-- 产品3：AI提示词 -->
+            <div class="card">
+                <span class="badge">🤖 AI</span>
+                <h2>AI办公提示词合集 · 80个场景</h2>
+                <p class="desc">写材料、写标书、数据分析、沟通协作、办公效率、创意辅助六大类。每条配技巧，复制即用。</p>
+                <div class="meta">
+                    <span class="price">¥14.9</span>
                     <span class="format">TXT+MD · 80条</span>
                 </div>
-                <button class="btn" onclick="showPay('AI办公提示词合集·50个场景', '19.9')">📥 立即购买</button>
+                <button class="btn" onclick="showPay('AI办公提示词合集-80个场景', '14.9')">📥 立即购买 ¥14.9</button>
             </div>
 
+            <!-- 产品4：小红书 -->
             <div class="card">
                 <span class="badge">🎨 创作</span>
-                <h2>📝 小红书爆款文案 · AI生成器+封面工具</h2>
-                <p class="desc">基于AI的智能文案生成（输入主题3秒出稿）+ 自动生成1080x1440精美封面图。支持种草/测评/避雷/干货等6种风格。</p>
-                <p class="desc">包含：AI文案生成器使用指南 + Python封面图生成器 + 20个爆款标题模板</p>
+                <h2>小红书爆款文案 · AI生成器+封面工具</h2>
+                <p class="desc">AI智能文案生成（输入主题3秒出稿）+ 在线封面图生成器（1080×1440），附20条爆款标题模板。</p>
                 <div class="meta">
-                    <span class="price">¥19.9</span>
+                    <span class="price">¥14.9</span>
                     <span class="format">在线工具+脚本</span>
                 </div>
-                <button class="btn" onclick="showPay('小红书爆款文案AI生成器+封面工具', '19.9')">📥 立即购买</button>
+                <button class="btn" onclick="showPay('小红书爆款文案-封面工具', '14.9')">📥 立即购买 ¥14.9</button>
             </div>
 
+            <!-- 产品5：全套打包 -->
             <div class="card">
-                <span class="badge new">📦 套装</span>
-                <h2>🎁 全部打包 · 方案师效率套装</h2>
-                <p class="desc">以上三件产品一起带走，额外赠送：2026年政企AI落地指南（行业报告）+ 免费更新一年。</p>
-                <p class="desc">适合：信息化方案工程师、售前顾问、独立顾问</p>
+                <span class="badge sale">🎁 省¥34</span>
+                <h2>全套打包 · 方案师效率套装</h2>
+                <p class="desc">以上4件产品一起带走，再送2026年政务AI落地指南（行业报告）+ 永久免费更新。</p>
                 <div class="meta">
-                    <span class="price">¥49.9</span>
-                    <span class="format">打包省¥20</span>
+                    <span class="price"><span class="original">¥74.6</span>¥39.9</span>
+                    <span class="format">全套省¥34</span>
                 </div>
-                <button class="btn" onclick="showPay('方案师效率套装（全打包）', '49.9')" style="background: #d63031;">📥 立即购买</button>
+                <button class="btn" onclick="showPay('方案师效率套装-全套打包', '39.9')" style="background: #d63031;">📥 立即购买 ¥39.9</button>
             </div>
+
         </div>
 
-        <div style="margin-top: 48px; background: #dfe6e9; border-radius: 12px; padding: 24px; text-align: center;">
-            <p style="color: #636e72; font-size: 0.9em;">
-                ⚡ 付款后自动发货 · 如有问题请在 GitHub 提 Issue<br>
-                <small style="color: #b2bec3;">所有产品为数字商品，一经售出概不退换</small>
+        <div style="margin-top: 36px; background: #dfe6e9; border-radius: 12px; padding: 20px; text-align: center;">
+            <p style="color: #636e72; font-size: 0.88em;">
+                ⚡ 扫码付款 → 自动显示下载链接 · 数字商品概不退换<br>
+                <small style="color: #b2bec3;">有问题请在 GitHub 提 Issue</small>
             </p>
         </div>
     </div>
 
     <div class="footer">
-        🛠️ 小安工坊 · 专注政府信息化方案效率提升<br>
-        <small>© 2026 · 有问题到 GitHub 找我们</small>
+        🛠️ 小安工坊 · 专注政府信息化效率提升<br>
+        <small>© 2026 · slm527.github.io/xiaoan-tools</small>
     </div>
 
     <!-- 支付弹窗 -->
@@ -130,57 +149,85 @@
                 <img src="wechat_qr.jpg" alt="微信收款码">
             </div>
             <div class="step-tip" id="payStep1">
-                <strong>①</strong> 长按或扫码付款<br>
-                <strong>②</strong> 付款后点击下方按钮获取文件<br>
+                <strong>①</strong> 扫码付款 ¥<span id="payAmount"></span><br>
+                <strong>②</strong> 付款后点下方按钮获取文件<br>
             </div>
-            <button class="btn" onclick="revealDownload()" id="revealBtn" style="margin-top: 12px; background: #00b894;">✅ 我已付款，获取下载链接</button>
-            <div id="downloadLinks" style="display: none; margin-top: 16px; text-align: left;">
-                <p style="font-weight: 600; color: #00b894; margin-bottom: 10px;">✅ 感谢购买！请下载：</p>
-                <div id="dlContent"></div>
-                <p style="margin-top: 12px; font-size: 0.8em; color: #b2bec3;">如链接失效请在 GitHub 提 Issue</p>
+            <button class="btn" onclick="revealDownload()" id="revealBtn" style="margin-top: 10px; background: #00b894;">✅ 我已付款，获取下载链接</button>
+            <div id="downloadLinks" style="display: none; margin-top: 14px;">
+                <p style="font-weight: 600; color: #00b894; margin-bottom: 8px;">✅ 感谢购买！请下载：</p>
+                <div id="dlContent" class="dl-list"></div>
+                <p style="margin-top: 10px; font-size: 0.78em; color: #b2bec3;">如链接失效请在 GitHub 提 Issue</p>
             </div>
         </div>
     </div>
 
     <script>
         const PRODUCTS = {
-            '政府信息化项目技术方案框架': { 
+            '方案模板包-全流程': {
                 files: [
-                    { name: '📄 技术方案通用框架_专业版.docx', url: '标书模板_技术方案框架_专业版.docx' },
-                    { name: '📄 技术方案通用框架_专业版.md', url: '标书模板_技术方案框架_专业版.md' }
+                    { name: '📋 01-需求分析报告模板.docx', url: '方案模板包/01需求分析报告/需求分析报告模板（模板）.docx' },
+                    { name: '📋 01-信息系统调研表.xls', url: '方案模板包/01需求分析报告/信息系统调研表（模板）.xls' },
+                    { name: '📋 02-项目建议书模板（国标）.docx', url: '方案模板包/02项目建议书/【国标】项目建议书模板.docx' },
+                    { name: '📋 03-可行性研究报告（55号文）.docx', url: '方案模板包/03可行性研究报告/【国标】可行性研究报告模板（55号文）.docx' },
+                    { name: '📋 03-可行性研究报告（57号文）.doc', url: '方案模板包/03可行性研究报告/【国标】可行性研究报告模板（57号文） .doc' },
+                    { name: '📋 04-初步设计方案（国标）.docx', url: '方案模板包/04初步设计方案/【国标】初步设计方案模板.docx' },
+                    { name: '📋 05-功能点报价表模板.xlsx', url: '方案模板包/05功能点报价表/3.功能点报价表模板（标准）.xlsx' },
+                    { name: '📋 05-软件项目估算概念.docx', url: '方案模板包/05功能点报价表/4.软件项目估算相关概念.docx' },
                 ]
             },
-            'AI办公提示词合集·80个场景': {
+            '功能点造价测算模板': {
+                files: [
+                    { name: '📊 功能点报价表模板（标准）.xlsx', url: '方案模板包/05功能点报价表/3.功能点报价表模板（标准）.xlsx' },
+                    { name: '📄 软件项目估算相关概念.docx', url: '方案模板包/05功能点报价表/4.软件项目估算相关概念.docx' },
+                    { name: '📕 GB/T 36964-2018 软件研发成本度量规范.pdf', url: '方案模板包/05功能点报价表/1.功能点报价规范和依据/GBT 36964-2018软件研发成本度量规范.pdf' },
+                    { name: '📕 DB11T1010-2019 信息化软件开发费用测算规范.pdf', url: '方案模板包/05功能点报价表/1.功能点报价规范和依据/DB11T1010-2019信息化项目软件开发费用测算规范（发布稿）.pdf' },
+                    { name: '📕 CSBMK-2020 中国软件行业基准数据.pdf', url: '方案模板包/05功能点报价表/1.功能点报价规范和依据/CSBMK-2020年中国软件行业基准数据.pdf' },
+                    { name: '📕 CSBMK-2022 中国软件行业基准数据.pdf', url: '方案模板包/05功能点报价表/1.功能点报价规范和依据/CSBMK-2022年中国软件行业基准数据.pdf' },
+                    { name: '📕 软件研发成本度量规范应用指南.pdf', url: '方案模板包/05功能点报价表/1.功能点报价规范和依据/《软件研发成本度量规划》应用指南—预算场景.pdf' },
+                    { name: '📕 软件开发成本度量规范.pdf', url: '方案模板包/05功能点报价表/1.功能点报价规范和依据/软件开发成本度量规范(2)(1).pdf' },
+                    { name: '📍 河南省报价标准（81号文）.pdf', url: '方案模板包/05功能点报价表/2.各地报价模板/河南/河南省省级政务信息化建设项目支出预算标准豫财预〔2020〕81号.pdf' },
+                    { name: '📍 河南-功能点造价测算模板.xlsx', url: '方案模板包/05功能点报价表/2.各地报价模板/河南/项目软件功能点造价模板测算（河南）.xlsx' },
+                    { name: '📍 海南-功能点造价测算模板.xlsx', url: '方案模板包/05功能点报价表/2.各地报价模板/海南/项目软件功能点造价测算模板（海南）.xlsx' },
+                    { name: '📍 湖北省报价标准（43号文）.pdf', url: '方案模板包/05功能点报价表/2.各地报价模板/湖北/鄂财预发【2020】43号 省财政厅关于印发《湖北省省级信息化类项目支出预算编制标准（试行）》的通知.pdf' },
+                    { name: '📍 贵州-报价指南.pdf', url: '方案模板包/05功能点报价表/2.各地报价模板/贵州/贵州省省级政务信息系统项目服务方案资金测算指南.pdf' },
+                    { name: '📍 贵州-功能点造价测算模板.xlsx', url: '方案模板包/05功能点报价表/2.各地报价模板/贵州/项目软件功能点造价测算（贵州）.xlsx' },
+                    { name: '📍 西藏-功能点造价测算模板.xlsx', url: '方案模板包/05功能点报价表/2.各地报价模板/西藏/项目软件功能点造价测算(西藏) .xlsx' },
+                ]
+            },
+            'AI办公提示词合集-80个场景': {
                 files: [
                     { name: '📄 AI提示词合集_80个场景.txt', url: 'AI提示词合集_80个场景_专业版.txt' },
-                    { name: '📄 AI提示词合集_80个场景.md', url: 'AI提示词合集_80个场景_专业版.md' }
+                    { name: '📄 AI提示词合集_80个场景.md（带格式）', url: 'AI提示词合集_80个场景_专业版.md' }
                 ]
             },
-            '小红书爆款文案AI生成器+封面工具': {
+            '小红书爆款文案-封面工具': {
                 files: [
                     { name: '📄 AI文案生成器使用指南.md', url: '小红书AI文案生成器_使用指南.md' },
                     { name: '🌐 封面图在线生成器（网页版）', url: 'cover_generator.html' },
                     { name: '📄 爆款标题模板20条.md', url: '小红书爆款标题模板_20条.md' }
                 ]
             },
-            '方案师效率套装（全打包）': {
-                files: [
-                    { name: '📄 技术方案通用框架_专业版.docx', url: '标书模板_技术方案框架_专业版.docx' },
-                    { name: '📄 技术方案通用框架_专业版.md', url: '标书模板_技术方案框架_专业版.md' },
-                    { name: '📄 AI提示词合集_80个场景.txt', url: 'AI提示词合集_80个场景_专业版.txt' },
-                    { name: '📄 AI提示词合集_80个场景.md', url: 'AI提示词合集_80个场景_专业版.md' },
-                    { name: '📄 小红书AI文案生成器使用指南', url: '小红书AI文案生成器_使用指南.md' },
-                    { name: '🌐 封面图在线生成器（网页版）', url: 'cover_generator.html' }
-                ]
+            '方案师效率套装-全套打包': {
+                files: null  // special handling
             }
         };
+
+        // 套装：合并所有产品的文件
+        function getBundleFiles() {
+            let all = [];
+            Object.values(PRODUCTS).forEach(p => {
+                if (p.files) all = all.concat(p.files);
+            });
+            return all;
+        }
 
         let currentProduct = '';
 
         function showPay(name, price) {
             currentProduct = name;
             document.getElementById('payProductName').textContent = name;
-            document.getElementById('payPrice').textContent = '¥ ' + price;
+            document.getElementById('payPrice').textContent = '¥' + price;
+            document.getElementById('payAmount').textContent = price;
             document.getElementById('payStep1').style.display = 'block';
             document.getElementById('revealBtn').style.display = 'block';
             document.getElementById('downloadLinks').style.display = 'none';
@@ -192,12 +239,27 @@
         }
 
         function revealDownload() {
-            const product = PRODUCTS[currentProduct];
-            if (!product) return;
-
             const dlContent = document.getElementById('dlContent');
-            dlContent.innerHTML = product.files.map(f =>
-                `<a href="${f.url}" download style="display: block; padding: 8px 12px; background: #f8f9fa; border-radius: 6px; margin-bottom: 6px; color: #6c5ce7; text-decoration: none; font-size: 0.9em;">${f.name}</a>`
+            let files;
+
+            if (currentProduct === '方案师效率套装-全套打包') {
+                files = getBundleFiles();
+            } else {
+                const product = PRODUCTS[currentProduct];
+                if (!product) return;
+                files = product.files;
+            }
+
+            // 去重（套装可能包含重复）
+            const seen = new Set();
+            files = files.filter(f => {
+                if (seen.has(f.url)) return false;
+                seen.add(f.url);
+                return true;
+            });
+
+            dlContent.innerHTML = files.map(f =>
+                `<a href="${f.url}" download>${f.name}</a>`
             ).join('');
 
             document.getElementById('payStep1').style.display = 'none';
